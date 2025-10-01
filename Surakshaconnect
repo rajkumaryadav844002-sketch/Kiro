@@ -1,0 +1,363 @@
+import { useState } from 'react';
+import { Button } from "/components/ui/button";
+import { Input } from "/components/ui/input";
+import { Label } from "/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "/components/ui/radio-group";
+import { Switch } from "/components/ui/switch";
+
+const SurakshaConnect = () => {
+  const [currentRole, setCurrentRole] = useState<'tenant' | 'landlord' | 'police' | 'admin'>('tenant');
+  const [onboardingStep, setOnboardingStep] = useState(0);
+  const [loginData, setLoginData] = useState({
+    name: '',
+    age: '',
+    gender: '',
+    email: '',
+    password: ''
+  });
+  const [userData, setUserData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    kycType: 'aadhaar' as 'aadhaar' | 'passport' | 'driving',
+    kycNumber: '',
+    consentLandlord: false,
+    consentPolice: false,
+    consentEmployer: false,
+    emergencyContacts: ['', '']
+  });
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setUserData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleLoginChange = (field: string, value: string) => {
+    setLoginData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleLogin = () => {
+    if (loginData.email && loginData.password) {
+      setOnboardingStep(1);
+    } else {
+      alert('Please fill in all required fields');
+    }
+  };
+
+  const handleEmergencySOS = () => {
+    if (window.confirm('Are you sure you want to trigger an emergency alert? This will notify your landlord and local authorities.')) {
+      alert('Emergency alert sent! Help is on the way.');
+      // In real implementation: Send API request to backend
+    }
+  };
+
+  const handleKYCUpload = () => {
+    alert('KYC documents would be uploaded to secure server');
+    setOnboardingStep(4);
+  };
+
+  return (
+    <div className="min-h-screen" style={{ 
+      background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d1b69 100%)',
+      fontFamily: '"Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif'
+    }}>
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        * {
+          font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+      `}</style>
+
+      {/* Professional Header */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 backdrop-blur-3xl"></div>
+        <nav className="relative px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
+                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                boxShadow: '0 8px 32px rgba(99, 102, 241, 0.3)'
+              }}>
+                <span className="text-white text-lg font-bold">S</span>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white tracking-tight">SurakshaConnect</h1>
+                <p className="text-sm text-gray-300 font-medium">Enterprise Security Platform</p>
+              </div>
+            </div>
+            <div className="hidden md:flex items-center space-x-8">
+              <span className="text-gray-300 text-sm font-medium">Secure • Compliant • Trusted</span>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      {/* Login Form */}
+      {onboardingStep === 0 && (
+        <div className="flex min-h-screen items-center justify-center px-4 py-12">
+          <div className="w-full max-w-md">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+              <p className="text-gray-400 font-medium">Sign in to your secure account</p>
+            </div>
+            
+            <Card className="border border-gray-700/50 shadow-2xl" style={{ 
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25)'
+            }}>
+              <CardHeader className="space-y-1 pb-6">
+                <CardTitle className="text-2xl font-bold text-gray-900">Account Login</CardTitle>
+                <CardDescription className="text-gray-600 font-medium">Enter your credentials to continue</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Full Name</Label>
+                  <Input
+                    id="name"
+                    value={loginData.name}
+                    onChange={(e) => handleLoginChange('name', e.target.value)}
+                    placeholder="Enter your full name"
+                    className="h-12 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 text-gray-900 font-medium"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="age" className="text-sm font-semibold text-gray-700">Age</Label>
+                  <Input
+                    id="age"
+                    type="number"
+                    value={loginData.age}
+                    onChange={(e) => handleLoginChange('age', e.target.value)}
+                    placeholder="Enter your age"
+                    className="h-12 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 text-gray-900 font-medium"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gender" className="text-sm font-semibold text-gray-700">Gender</Label>
+                  <Input
+                    id="gender"
+                    value={loginData.gender}
+                    onChange={(e) => handleLoginChange('gender', e.target.value)}
+                    placeholder="Select your gender"
+                    className="h-12 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 text-gray-900 font-medium"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email Address</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={loginData.email}
+                    onChange={(e) => handleLoginChange('email', e.target.value)}
+                    placeholder="name@company.com"
+                    className="h-12 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 text-gray-900 font-medium"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-semibold text-gray-700">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={loginData.password}
+                    onChange={(e) => handleLoginChange('password', e.target.value)}
+                    placeholder="Enter your secure password"
+                    className="h-12 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 text-gray-900 font-medium"
+                  />
+                </div>
+              </CardContent>
+              <CardFooter className="pt-6">
+                <Button 
+                  className="w-full h-12 text-base font-semibold transition-all duration-300" 
+                  onClick={handleLogin}
+                  style={{
+                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                    boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = '0 12px 35px rgba(99, 102, 241, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(99, 102, 241, 0.3)';
+                  }}
+                >
+                  Continue to Platform
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Professional Features Overview */}
+      {onboardingStep === 1 && (
+        <div className="min-h-screen py-12 px-4">
+          <div className="max-w-7xl mx-auto">
+            {/* Professional Navigation */}
+            <nav className="mb-16 px-4 md:px-8 py-6 rounded-2xl" style={{
+              background: 'rgba(15, 15, 35, 0.95)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(139, 92, 246, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
+            }}>
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+                <div className="flex items-center space-x-4 md:space-x-8">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
+                      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                      boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)'
+                    }}>
+                      <span className="text-white text-lg font-bold">S</span>
+                    </div>
+                    <div>
+                      <span className="text-white font-bold text-lg md:text-xl tracking-tight">SurakshaConnect</span>
+                      <div className="text-xs text-gray-400 font-medium uppercase tracking-wider">Enterprise Platform</div>
+                    </div>
+                  </div>
+                  <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
+                    <a href="#" className="text-white hover:text-purple-300 transition-colors text-sm font-medium">Platform</a>
+                    <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm font-medium">Solutions</a>
+                    <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm font-medium">Security</a>
+                    <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm font-medium">Compliance</a>
+                  </nav>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                  <span className="text-gray-300 text-xs md:text-sm font-medium text-center">Next: Configure Access</span>
+                  <Button 
+                    variant="outline"
+                    className="border-purple-500 text-purple-300 hover:bg-purple-500 hover:text-white transition-all duration-300 font-semibold px-4 md:px-6 text-sm md:text-base w-full sm:w-auto"
+                    onClick={() => setOnboardingStep(2)}
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </div>
+            </nav>
+
+            {/* Hero Section */}
+            <div className="text-center mb-20">
+              <div className="inline-block px-4 py-2 rounded-full mb-6" style={{
+                background: 'rgba(139, 92, 246, 0.1)',
+                border: '1px solid rgba(139, 92, 246, 0.3)'
+              }}>
+                <span className="text-purple-300 text-sm font-semibold uppercase tracking-wider">Enterprise Security</span>
+              </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight" style={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 50%, #a855f7 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textShadow: '0 0 40px rgba(168, 85, 247, 0.3)'
+              }}>
+                Advanced Digital<br />Security Platform
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto font-medium leading-relaxed">
+                Comprehensive safety solutions for property management, tenant verification, and emergency response systems with enterprise-grade security
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="inline-flex items-center px-6 py-3 rounded-full" style={{
+                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                  boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)'
+                }}>
+                  <span className="text-white font-semibold">✓ SOC 2 Compliant</span>
+                </div>
+                <div className="inline-flex items-center px-6 py-3 rounded-full" style={{
+                  background: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)',
+                  boxShadow: '0 8px 25px rgba(236, 72, 153, 0.3)'
+                }}>
+                  <span className="text-white font-semibold">✓ ISO 27001 Certified</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Enhanced Features Grid */}
+            <div className="mb-20">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Enterprise Features</h2>
+                <p className="text-lg text-gray-400 font-medium">Comprehensive security modules designed for scale and reliability</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* KYC Verification */}
+                <div className="group relative overflow-hidden rounded-3xl p-8 cursor-pointer transition-all duration-700" style={{
+                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%)',
+                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                  backdropFilter: 'blur(15px)'
+                }} 
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-12px) scale(1.03)';
+                  e.currentTarget.style.boxShadow = '0 25px 50px rgba(99, 102, 241, 0.4)';
+                  e.currentTarget.style.border = '1px solid rgba(99, 102, 241, 0.8)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = '0 10px 25px rgba(99, 102, 241, 0.1)';
+                  e.currentTarget.style.border = '1px solid rgba(99, 102, 241, 0.3)';
+                }}>
+                  <div className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center" style={{
+                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                    boxShadow: '0 8px 25px rgba(99, 102, 241, 0.4)'
+                  }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
+                      <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-white text-2xl font-bold mb-4 tracking-tight">Identity Verification</h3>
+                  <p className="text-gray-300 text-base leading-relaxed font-medium">Advanced KYC processing with Aadhaar, Passport, and Driver License verification. Fully compliant with Indian data protection regulations.</p>
+                </div>
+
+                {/* Background Screening */}
+                <div className="group relative overflow-hidden rounded-3xl p-8 cursor-pointer transition-all duration-700" style={{
+                  background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+                  border: '1px solid rgba(236, 72, 153, 0.3)',
+                  backdropFilter: 'blur(15px)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-12px) scale(1.03)';
+                  e.currentTarget.style.boxShadow = '0 25px 50px rgba(236, 72, 153, 0.4)';
+                  e.currentTarget.style.border = '1px solid rgba(236, 72, 153, 0.8)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = '0 10px 25px rgba(236, 72, 153, 0.1)';
+                  e.currentTarget.style.border = '1px solid rgba(236, 72, 153, 0.3)';
+                }}>
+                  <div className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center" style={{
+                    background: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)',
+                    boxShadow: '0 8px 25px rgba(236, 72, 153, 0.4)'
+                  }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
+                      <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M21 21L16.65 16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-white text-2xl font-bold mb-4 tracking-tight">Background Intelligence</h3>
+                  <p className="text-gray-300 text-base leading-relaxed font-medium">Comprehensive background checks including criminal records, employment verification, and credit history analysis.</p>
+                </div>
+
+                {/* Digital Contracts */}
+                <div className="group relative overflow-hidden rounded-3xl p-8 cursor-pointer transition-all duration-700" style={{
+                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%)',
+                  border: '1px solid rgba(6, 182, 212, 0.3)',
+                  backdropFilter: 'blur(15px)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-12px) scale(1.03)';
+                  e.currentTarget.style.boxShadow = '0 25px 50px rgba(6, 182, 212, 0.4)';
+                  e.currentTarget.style.border = '1px solid rgba(6, 182, 212, 0.8)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = '0 10px 25px rgba(6, 182, 212, 0.1)';
+                  e.currentTarget.style.border = '1px solid rgba(6, 182, 212, 0.3)';
+                }}>
+                  <div className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center" style={{
+                    background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+                    boxShadow: '0 8px 25px rgba(6, 182, 212, 0.4)'
+                  }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
+                      <path d="M14 2H6A2 2 0 0 0 4 4V20A2 2 0 0 0 6 22H18A2 2 0 0 0 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <polyline points="14,2 14,8 20,8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line
